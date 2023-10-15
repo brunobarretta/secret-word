@@ -27,6 +27,11 @@ function App() {
   const [pickedCategory, setPickedCategory] = useState("")
   const [letters, setLetters] = useState([])
 
+  const [guessedLetters, setGuessedLetters] = useState([])
+  const [wrongLetters, setWrongLetters] = useState([])
+  const [guesses, setGuesses] = useState(3)
+  const [score, setScore] = useState(0)
+
   // starts the secret word game
   const pickWordAndCategory = () => {
     //pick a random category
@@ -56,8 +61,28 @@ function App() {
   }
 
   // process the letter input
-  const verifyLetter = () => {
-    setGameStage(stages[2].name)
+  const verifyLetter = (letter) => {
+
+    const normalizedLetter = letter.toLowerCase()
+
+    if (guessedLetters.includes(normalizedLetter) || wrongLetters.includes(normalizedLetter)) {
+      return
+    }
+
+    if (letters.includes(normalizedLetter)) {
+      setGuessedLetters((actualGuessedLetters) => [
+        ...actualGuessedLetters, 
+        normalizedLetter
+      ])
+    } else {
+      setWrongLetters((actualWrongLetters) => [
+        ...actualWrongLetters, 
+        normalizedLetter
+      ])
+    }
+
+    console.log(guessedLetters)
+    console.log(wrongLetters)
   }
 
   // process the letter input
@@ -69,7 +94,18 @@ function App() {
     <div className="App">
       <h2>
         {gameStage === "start" && <StartScreen startGame={startGame} />}
-        {gameStage === "game" && <Game verifyLetter={verifyLetter} />}
+        {gameStage === "game" && (
+          <Game 
+            verifyLetter={verifyLetter} 
+            pickedWord={pickedWord}
+            pickedCategory={pickedCategory}
+            letters={letters}
+            guessedLetters={guessedLetters}
+            wrongLetters={wrongLetters}
+            guesses={guesses}
+            score={score}
+          />
+        )}
         {gameStage === "end" && <GameOver retry={retry}/>}
       </h2>
     </div>
